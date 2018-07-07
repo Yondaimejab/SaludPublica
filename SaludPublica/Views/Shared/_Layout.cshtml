@@ -37,13 +37,14 @@
                         if (User.IsInRole("Administrador"))
                         {
                             <li><a asp-area="" asp-controller="Provincias" asp-action="">Provincias</a></li>
-                            <li><a asp-area="" asp-controller="Pais" asp-action="Contact">Paises</a></li>
+                            <li><a asp-area="" asp-controller="Pais" asp-action="">Paises</a></li>
                         }
                         else if (User.IsInRole("Doctor"))
                         {
                             <li><a asp-area="" asp-controller="Pacientes" asp-action="">Pacientes</a></li>
                             <li><a asp-area="" asp-controller="Diagnosticos" asp-action="Create">Consulta</a></li>
                             <li><a asp-area="" asp-controller="Enfermedades" asp-action="">Enfermedades</a></li>
+                            <li><a asp-area="" asp-controller="Sintomas" asp-action="">Sintomas</a></li>
 
                         }
                     }

@@ -1,0 +1,66 @@
+﻿@model SaludPublica.ViewModels.SintomasPorEnfermedadViewModel;
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<h4>Enfermedad</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Enfermedad.Nombre" class="control-label"></label>
+                <input asp-for="Enfermedad.Nombre" class="form-control" />
+                <span asp-validation-for="Enfermedad.Nombre" class="text-danger"></span>
+            </div>
+            <div class="container">
+                <h2>Elija los sintomas de la enfermedad.</h2>
+                <hr class="my-2"/>
+                <div class="container" id="SintomasListDiv">
+                    <div class="form-group col-md-3">
+                        <label>Sintoma: </label>
+                        <select class="form-control" name="Sintomas" id="Sintomas[0].SintomasID">
+                            @{ 
+                                foreach (var item in Model.Sintomas)
+                                {
+                                    <option value="@item.SintomaID"> @item.Descripcion</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="SintomaID"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-offset-7 col-md-2">
+                       
+                        <button type="button" class="btn btn-md btn-primary" onclick="callFunction()" >Añadir Sintoma</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+<script>
+    function callFunction() {
+        var a = JSON.parse('@Html.Raw(Json.Serialize(Model.Sintomas))');
+        AgregarSintoma(a);
+    }
+
+</script>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

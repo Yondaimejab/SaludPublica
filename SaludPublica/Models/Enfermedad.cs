@@ -9,8 +9,6 @@ namespace SaludPublica.Models
     {
         public int EnfermedadID { get; set; }
         public string Nombre { get; set; }
-        public virtual ICollection<Sintoma> Sintomas { get; set; }
-        
-        //Signos
+
     }
 }

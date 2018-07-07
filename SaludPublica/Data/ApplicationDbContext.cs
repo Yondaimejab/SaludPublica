@@ -21,6 +21,7 @@ namespace SaludPublica.Data
         public DbSet<Provincia> Provincias {get; set;}
         public DbSet<Sintoma> Sintomas { get; set; }
         public DbSet<Diagnostico> Diagnosticos { get; set; }
+        public DbSet<SintomaPorEnfermedades> sintomaPorEnfermedades { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

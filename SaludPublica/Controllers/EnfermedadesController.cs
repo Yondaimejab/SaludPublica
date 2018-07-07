@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SaludPublica.Data;
 using SaludPublica.Models;
+using SaludPublica.ViewModels;
 
 namespace SaludPublica.Controllers
 {
@@ -44,9 +45,13 @@ namespace SaludPublica.Controllers
         }
 
         // GET: Enfermedads/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var ViewModel = new SintomasPorEnfermedadViewModel()
+            {
+                Sintomas = await _context.Sintomas.ToListAsync()
+            };
+            return View(ViewModel);
         }
 
         // POST: Enfermedads/Create
@@ -54,15 +59,26 @@ namespace SaludPublica.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EnfermedadID,Nombre")] Enfermedad enfermedad)
+        public async Task<IActionResult> Create(Enfermedad enfermedad,ICollection<int> sintomas)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(enfermedad);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+               _context.Add(enfermedad);
+                var lista = new List<SintomaPorEnfermedades>();
+                foreach (var item in sintomas)
+                {
+                    lista.Add(
+                        new SintomaPorEnfermedades() { Enfermedad = enfermedad, Sintoma = _context.Sintomas.SingleOrDefault(s => s.SintomaID == item) }
+                    );
+                }
+                foreach (var item in lista)
+                {
+                    _context.Add(item);
+                }
+               await _context.SaveChangesAsync();
+               return RedirectToAction(nameof(Index));
             }
-            return View(enfermedad);
+            return View();
         }
 
         // GET: Enfermedads/Edit/5
