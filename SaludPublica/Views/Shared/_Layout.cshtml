@@ -33,6 +33,20 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    @{
+                        if (User.IsInRole("Administrador"))
+                        {
+                            <li><a asp-area="" asp-controller="Provincias" asp-action="">Provincias</a></li>
+                            <li><a asp-area="" asp-controller="Pais" asp-action="Contact">Paises</a></li>
+                        }
+                        else if (User.IsInRole("Doctor"))
+                        {
+                            <li><a asp-area="" asp-controller="Pacientes" asp-action="">Pacientes</a></li>
+                            <li><a asp-area="" asp-controller="Diagnosticos" asp-action="Create">Consulta</a></li>
+                            <li><a asp-area="" asp-controller="Enfermedades" asp-action="">Enfermedades</a></li>
+
+                        }
+                    }
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>

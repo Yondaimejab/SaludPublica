@@ -24,6 +24,7 @@ namespace SaludPublica.Models
         public int Edad { get; set; }
         [StringLength(1)]
         public string Sexo { get; set; }
+        public IList<Diagnostico> Diagnosticos { get; set; }
         
     }
 }

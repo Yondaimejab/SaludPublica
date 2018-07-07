@@ -11,9 +11,10 @@ using System;
 namespace SaludPublica.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180707023206_ChangingEnfermoToDiagnosticoAndPrimaryKey2")]
+    partial class ChangingEnfermoToDiagnosticoAndPrimaryKey2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,11 +185,7 @@ namespace SaludPublica.Data.Migrations
                     b.Property<int>("DiagnosticoID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("PacienteID");
-
                     b.HasKey("DiagnosticoID");
-
-                    b.HasIndex("PacienteID");
 
                     b.ToTable("Diagnosticos");
                 });
@@ -218,6 +215,8 @@ namespace SaludPublica.Data.Migrations
 
                     b.Property<string>("Calle");
 
+                    b.Property<int?>("DiagnosticoID");
+
                     b.Property<int>("Edad");
 
                     b.Property<string>("Nombre");
@@ -234,6 +233,8 @@ namespace SaludPublica.Data.Migrations
                     b.Property<string>("Telefono");
 
                     b.HasKey("PacienteID");
+
+                    b.HasIndex("DiagnosticoID");
 
                     b.HasIndex("ProvinciaID");
 
@@ -331,14 +332,6 @@ namespace SaludPublica.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("SaludPublica.Models.Diagnostico", b =>
-                {
-                    b.HasOne("SaludPublica.Models.Paciente", "Paciente")
-                        .WithMany("Diagnosticos")
-                        .HasForeignKey("PacienteID")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("SaludPublica.Models.Enfermedad", b =>
                 {
                     b.HasOne("SaludPublica.Models.Diagnostico")
@@ -348,6 +341,10 @@ namespace SaludPublica.Data.Migrations
 
             modelBuilder.Entity("SaludPublica.Models.Paciente", b =>
                 {
+                    b.HasOne("SaludPublica.Models.Diagnostico")
+                        .WithMany("Pacientes")
+                        .HasForeignKey("DiagnosticoID");
+
                     b.HasOne("SaludPublica.Models.Provincia", "Provincia")
                         .WithMany()
                         .HasForeignKey("ProvinciaID")

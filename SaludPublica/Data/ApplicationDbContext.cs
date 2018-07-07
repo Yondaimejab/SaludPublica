@@ -20,7 +20,7 @@ namespace SaludPublica.Data
         public DbSet<Pais> Paises { get; set; }
         public DbSet<Provincia> Provincias {get; set;}
         public DbSet<Sintoma> Sintomas { get; set; }
-        
+        public DbSet<Diagnostico> Diagnosticos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
