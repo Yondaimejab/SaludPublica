@@ -1,4 +1,5 @@
 ﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -94,7 +95,20 @@ namespace SaludPublica.Controllers
             {
                 return NotFound();
             }
-            return View(enfermedad);
+            var query = from registro in await _context.sintomaPorEnfermedades.ToListAsync()
+                        join sintoma in await _context.Sintomas.ToListAsync() on registro.SintomaID equals sintoma.SintomaID
+                        where registro.EnfermedadID == enfermedad.EnfermedadID
+                        select sintoma;
+            var viewModel = new SintomasPorEnfermedadViewModel()
+            {
+                Enfermedad = enfermedad,
+                Sintomas = new List<Sintoma>()
+            };
+            foreach (var item in query)
+            {
+                viewModel.Sintomas.Add(item);
+            }
+            return View(viewModel);
         }
 
         // POST: Enfermedads/Edit/5
@@ -102,7 +116,7 @@ namespace SaludPublica.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EnfermedadID,Nombre")] Enfermedad enfermedad)
+        public async Task<IActionResult> Edit(int id, [Bind("EnfermedadID,Nombre")] Enfermedad enfermedad,ICollection<int> sintomas)
         {
             if (id != enfermedad.EnfermedadID)
             {
@@ -114,6 +128,23 @@ namespace SaludPublica.Controllers
                 try
                 {
                     _context.Update(enfermedad);
+                    var query = from registro in await _context.sintomaPorEnfermedades.ToListAsync()
+                                join sintoma in await _context.Sintomas.ToListAsync() on registro.SintomaID equals sintoma.SintomaID
+                                where registro.EnfermedadID == enfermedad.EnfermedadID
+                                select registro;
+                    foreach (var item in query)
+                    {
+                        _context.sintomaPorEnfermedades.Remove(item);
+                    }
+                    var lista = new List<SintomaPorEnfermedades>();
+                    foreach (var item in sintomas)
+                    {
+                        lista.Add(new SintomaPorEnfermedades() {  Enfermedad = enfermedad, Sintoma = await _context.Sintomas.SingleAsync(s => s.SintomaID == item)});
+                    }
+                    foreach (var item in lista)
+                    {
+                        _context.Add(item);
+                    }
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

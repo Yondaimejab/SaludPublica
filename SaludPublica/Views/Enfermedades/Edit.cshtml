@@ -1,4 +1,4 @@
-﻿@model SaludPublica.Models.Enfermedad
+﻿@model  SaludPublica.ViewModels.SintomasPorEnfermedadViewModel;
 
 @{
     ViewData["Title"] = "Edit";
@@ -12,13 +12,26 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="EnfermedadID" />
+            <input type="hidden" asp-for="Enfermedad.EnfermedadID" />
             <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
+                <label asp-for="Enfermedad.Nombre" class="control-label"></label>
+                <input asp-for="Enfermedad.Nombre" class="form-control" />
+                <span asp-validation-for="Enfermedad.Nombre" class="text-danger"></span>
+            </div>
+            <h2>Sintomas de @Model.Enfermedad.Nombre</h2>
+            <hr class="my-2" />
+            <div class="container" id="SintomasListDiv">
+                @foreach (var item in Model.Sintomas)
+                 {
+                     <div class="form-group col-md-3">
+                         <label asp-for="@item.SintomaID">Sintoma: </label>
+                         @Html.DropDownListFor(m => m.SintomaID, new SelectList(Model.Sintomas, "SintomaID", "Descripcion"),item.Descripcion, new { Class = "col-md-3 form-control" })
+                         <span asp-validation-for="@item.SintomaID"></span>
+                     </div>
+                 }
             </div>
             <div class="form-group">
+                <button class="btn btn-primary" type="button" onclick="call()">Añadir Sintoma</button>
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </form>
@@ -28,7 +41,11 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
+<script>
+    function call() {
+        GetSintomas('../../Sintomas/GetSintomas');
+    }
+</script>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

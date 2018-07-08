@@ -25,6 +25,12 @@ namespace SaludPublica.Controllers
             return View(await _context.Sintomas.ToListAsync());
         }
 
+        [HttpGet]
+        public async Task<JsonResult> GetSintomas()
+        {
+            return new JsonResult(await _context.Sintomas.ToListAsync());
+        }
+
         // GET: Sintomas/Details/5
         public async Task<IActionResult> Details(int? id)
         {
