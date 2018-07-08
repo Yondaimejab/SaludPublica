@@ -1,24 +1,44 @@
-﻿@model SaludPublica.Models.Enfermedad
+﻿@model SaludPublica.ViewModels.SintomasPorEnfermedadViewModel;
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
+<h2>Enfermdad:  @Html.DisplayFor(model => model.Enfermedad.Nombre)</h2>
 
 <div>
-    <h4>Enfermedad</h4>
+    <h4>Descripcion:</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Nombre)
+            @Html.DisplayNameFor(model => model.Enfermedad.Nombre)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Nombre)
+            @Html.DisplayFor(model => model.Enfermedad.Nombre)
         </dd>
     </dl>
+    <h2>Sintomas: </h2>
+    <hr />
+    <table class="table table-bordered table-hover table-responsive" >
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Sintomas[0].Descripcion)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Sintomas)
+            {
+                <tr>
+                    <td> @item.Descripcion</td>
+                </tr>  
+            }
+            
+        </tbody>
+    </table>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.EnfermedadID">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Enfermedad.EnfermedadID">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

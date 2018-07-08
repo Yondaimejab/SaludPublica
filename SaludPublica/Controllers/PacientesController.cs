@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SaludPublica.Data;
 using SaludPublica.Models;
+using SaludPublica.ViewModels;
 
 namespace SaludPublica.Controllers
 {
@@ -48,8 +49,11 @@ namespace SaludPublica.Controllers
         // GET: Pacientes/Create
         public IActionResult Create()
         {
-            ViewData["ProvinciaID"] = new SelectList(_context.Provincias, "ProvinciaID", "Nombre");
-            return View();
+            var viewModel = new PacienteProvinciaViewModel()
+            {
+                Provincias = _context.Provincias.ToList()
+            };
+            return View(viewModel);
         }
 
         // POST: Pacientes/Create

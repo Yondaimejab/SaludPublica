@@ -41,8 +41,21 @@ namespace SaludPublica.Controllers
             {
                 return NotFound();
             }
+            var query = from registro in await _context.sintomaPorEnfermedades.ToListAsync()
+                        join sintoma in await _context.Sintomas.ToListAsync() on registro.SintomaID equals sintoma.SintomaID
+                        where registro.EnfermedadID == enfermedad.EnfermedadID
+                        select sintoma;
+            var viewModel = new SintomasPorEnfermedadViewModel()
+            {
+                Enfermedad = enfermedad,
+                Sintomas = new List<Sintoma>()
+            };
+            foreach (var item in query)
+            {
+                viewModel.Sintomas.Add(item);
+            }
 
-            return View(enfermedad);
+            return View(viewModel);
         }
 
         // GET: Enfermedads/Create
@@ -116,13 +129,9 @@ namespace SaludPublica.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EnfermedadID,Nombre")] Enfermedad enfermedad,ICollection<int> sintomas)
+        public async Task<IActionResult> Edit([Bind("EnfermedadID,Nombre")] Enfermedad enfermedad,ICollection<int> sintomas)
         {
-            if (id != enfermedad.EnfermedadID)
-            {
-                return NotFound();
-            }
-
+           
             if (ModelState.IsValid)
             {
                 try
@@ -177,8 +186,21 @@ namespace SaludPublica.Controllers
             {
                 return NotFound();
             }
+            var query = from registro in await _context.sintomaPorEnfermedades.ToListAsync()
+                        join sintoma in await _context.Sintomas.ToListAsync() on registro.SintomaID equals sintoma.SintomaID
+                        where registro.EnfermedadID == enfermedad.EnfermedadID
+                        select sintoma;
+            var viewModel = new SintomasPorEnfermedadViewModel()
+            {
+                Enfermedad = enfermedad,
+                Sintomas = new List<Sintoma>()
+            };
+            foreach (var item in query)
+            {
+                viewModel.Sintomas.Add(item);
+            }
 
-            return View(enfermedad);
+            return View(viewModel);
         }
 
         // POST: Enfermedads/Delete/5
@@ -187,6 +209,14 @@ namespace SaludPublica.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var enfermedad = await _context.Enfermedades.SingleOrDefaultAsync(m => m.EnfermedadID == id);
+            var query = from registro in await _context.sintomaPorEnfermedades.ToListAsync()
+                        join sintoma in await _context.Sintomas.ToListAsync() on registro.SintomaID equals sintoma.SintomaID
+                        where registro.EnfermedadID == enfermedad.EnfermedadID
+                        select registro;
+            foreach (var item in query)
+            {
+                _context.sintomaPorEnfermedades.Remove(item);
+            }
             _context.Enfermedades.Remove(enfermedad);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
