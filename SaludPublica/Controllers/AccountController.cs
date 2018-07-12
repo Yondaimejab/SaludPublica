@@ -26,6 +26,7 @@ namespace SaludPublica.Controllers
         private readonly ILogger _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
         private bool _isAdmin;
+        private bool _isDoctor;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -40,6 +41,7 @@ namespace SaludPublica.Controllers
             _logger = logger;
             _roleManager = roleManager;
             _isAdmin = false;
+            _isDoctor = false;
         }
 
         [TempData]
@@ -226,9 +228,13 @@ namespace SaludPublica.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                if (model.Password.Substring(0,5).Equals("admin")) {
+                if (model.Password.Substring(0, 5).Equals("admin"))
+                {
                     _isAdmin = true;
-                    model.Password = model.Password.Substring(5, model.Password.Length-5);
+                    model.Password = model.Password.Substring(5, model.Password.Length - 5);
+                }
+                else {
+                    _isDoctor = true;
                 }
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -238,7 +244,8 @@ namespace SaludPublica.Controllers
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
                     await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
-                    if (_isAdmin) {
+                    if (_isAdmin)
+                    {
                         var xRol = await _roleManager.RoleExistsAsync("Administrador");
                         if (!xRol)
                         {
@@ -253,16 +260,37 @@ namespace SaludPublica.Controllers
                                 return RedirectToLocal(returnUrl);
                             }
                         }
-                        else {
+                        else
+                        {
                             await _userManager.AddToRoleAsync(user, "Administrador");
                             await _signInManager.SignInAsync(user, isPersistent: false);
                             _logger.LogInformation("Administrador existe asi que solo la usa.");
                             return RedirectToLocal(returnUrl);
                         }
+                    }else{
+                        var xRol = await _roleManager.RoleExistsAsync("Doctor");
+                        if (!xRol)
+                        {
+                            var role = new IdentityRole("Doctor");
+                            var res = await _roleManager.CreateAsync(role);
+
+                            if (res.Succeeded)
+                            {
+                                await _userManager.AddToRoleAsync(user, "Doctor");
+                                await _signInManager.SignInAsync(user, isPersistent: false);
+                                _logger.LogInformation("User created a new account with password.");
+                                return RedirectToLocal(returnUrl);
+                            }
+                        }
+                        else
+                        {
+                            await _userManager.AddToRoleAsync(user, "Doctor");
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            _logger.LogInformation("Usuario Creado como Doctor");
+                            return RedirectToLocal(returnUrl);
+                        }
+
                     }
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    _logger.LogInformation("User created a new account with password.");
-                    return RedirectToLocal(returnUrl);
                 }
                 AddErrors(result);
             }
