@@ -11,9 +11,10 @@ using System;
 namespace SaludPublica.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180719024154_DiagnosticsComments")]
+    partial class DiagnosticsComments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -191,7 +192,9 @@ namespace SaludPublica.Data.Migrations
 
                     b.Property<string>("DoctorID");
 
-                    b.Property<int>("EnfermedadID");
+                    b.Property<string>("EnfermedadID");
+
+                    b.Property<int?>("EnfermedadID1");
 
                     b.Property<int>("PacienteID");
 
@@ -199,7 +202,7 @@ namespace SaludPublica.Data.Migrations
 
                     b.HasIndex("DoctorID");
 
-                    b.HasIndex("EnfermedadID");
+                    b.HasIndex("EnfermedadID1");
 
                     b.HasIndex("PacienteID");
 
@@ -362,8 +365,7 @@ namespace SaludPublica.Data.Migrations
 
                     b.HasOne("SaludPublica.Models.Enfermedad", "Enfermedad")
                         .WithMany()
-                        .HasForeignKey("EnfermedadID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("EnfermedadID1");
 
                     b.HasOne("SaludPublica.Models.Paciente", "Paciente")
                         .WithMany("Diagnosticos")

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,16 +14,18 @@ namespace SaludPublica.Controllers
     public class DiagnosticosController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _UserManager;
 
-        public DiagnosticosController(ApplicationDbContext context)
+        public DiagnosticosController(ApplicationDbContext context, UserManager<ApplicationUser> UserManager)
         {
             _context = context;
+            _UserManager = UserManager;
         }
 
         // GET: Diagnosticoes
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Diagnosticos.Include(d => d.Paciente);
+            var applicationDbContext = _context.Diagnosticos.Include(d => d.Paciente).Include(d => d.Enfermedad).Include(d => d.Doctor);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -35,7 +38,7 @@ namespace SaludPublica.Controllers
             }
 
             var diagnostico = await _context.Diagnosticos
-                .Include(d => d.Paciente)
+                .Include(d => d.Paciente).Include(d=> d.Enfermedad).Include(d => d.Doctor)
                 .SingleOrDefaultAsync(m => m.DiagnosticoID == id);
             if (diagnostico == null)
             {
@@ -48,7 +51,8 @@ namespace SaludPublica.Controllers
         // GET: Diagnosticoes/Create
         public IActionResult Create()
         {
-            ViewData["PacienteID"] = new SelectList(_context.Pacientes, "PacienteID", "PacienteID");
+            ViewData["PacienteID"] = new SelectList(_context.Pacientes, "PacienteID", "Nombre");
+            ViewData["EnfermedadID"] = new SelectList(_context.Enfermedades,"EnfermedadID","Nombre");
             return View();
         }
 
@@ -57,15 +61,18 @@ namespace SaludPublica.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DiagnosticoID,PacienteID")] Diagnostico diagnostico)
+        public async Task<IActionResult> Create([Bind("DiagnosticoID,PacienteID,EnfermedadID,Comment")] Diagnostico diagnostico)
         {
             if (ModelState.IsValid)
             {
+                diagnostico.Date = DateTime.Now;
+                diagnostico.Doctor = await _UserManager.GetUserAsync(HttpContext.User);
                 _context.Add(diagnostico);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["PacienteID"] = new SelectList(_context.Pacientes, "PacienteID", "PacienteID", diagnostico.PacienteID);
+            ViewData["EnfermedadID"] = new SelectList(_context.Enfermedades, "EnferemedadID", "EnferemedadID", diagnostico.EnfermedadID);
             return View(diagnostico);
         }
 
@@ -77,12 +84,14 @@ namespace SaludPublica.Controllers
                 return NotFound();
             }
 
-            var diagnostico = await _context.Diagnosticos.SingleOrDefaultAsync(m => m.DiagnosticoID == id);
+            var diagnostico = await _context.Diagnosticos.Include(d => d.Paciente).Include(d => d.Enfermedad).Include(d => d.Doctor).SingleOrDefaultAsync(m => m.DiagnosticoID == id);
             if (diagnostico == null)
             {
                 return NotFound();
             }
-            ViewData["PacienteID"] = new SelectList(_context.Pacientes, "PacienteID", "PacienteID", diagnostico.PacienteID);
+            ViewData["PacienteID"] = new SelectList(_context.Pacientes, "PacienteID", "Nombre", diagnostico.PacienteID);
+            ViewData["EnfermedadID"] = new SelectList(_context.Enfermedades, "EnfermedadID", "Nombre", diagnostico.PacienteID);
+
             return View(diagnostico);
         }
 
@@ -91,7 +100,7 @@ namespace SaludPublica.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DiagnosticoID,PacienteID")] Diagnostico diagnostico)
+        public async Task<IActionResult> Edit(int id, [Bind("DiagnosticoID,PacienteID,EnfermedadID,Comment")] Diagnostico diagnostico)
         {
             if (id != diagnostico.DiagnosticoID)
             {
@@ -102,6 +111,7 @@ namespace SaludPublica.Controllers
             {
                 try
                 {
+                    diagnostico.Doctor = await _UserManager.GetUserAsync(HttpContext.User);
                     _context.Update(diagnostico);
                     await _context.SaveChangesAsync();
                 }
@@ -118,7 +128,9 @@ namespace SaludPublica.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PacienteID"] = new SelectList(_context.Pacientes, "PacienteID", "PacienteID", diagnostico.PacienteID);
+            ViewData["PacienteID"] = new SelectList(_context.Pacientes, "PacienteID", "Nombre", diagnostico.PacienteID);
+            ViewData["EnfermedadID"] = new SelectList(_context.Enfermedades, "EnfermeadadID", "Nombre", diagnostico.PacienteID);
+
             return View(diagnostico);
         }
 
@@ -131,7 +143,7 @@ namespace SaludPublica.Controllers
             }
 
             var diagnostico = await _context.Diagnosticos
-                .Include(d => d.Paciente)
+                .Include(d => d.Paciente).Include(d => d.Enfermedad).Include(d => d.Doctor)
                 .SingleOrDefaultAsync(m => m.DiagnosticoID == id);
             if (diagnostico == null)
             {
