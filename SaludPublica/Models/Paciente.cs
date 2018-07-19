@@ -13,9 +13,9 @@ namespace SaludPublica.Models
         public int PacienteID { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }
-        public string Telefono { get; set;}
+        public string Telefono { get; set; }
         public string Calle { get; set; }
-        [Display( Name = "No.")]
+        [Display(Name = "No.")]
         public int NumeroDeCasa { get; set; }
         public string Sector { get; set; }
         [ForeignKey("ProvinciaID")]

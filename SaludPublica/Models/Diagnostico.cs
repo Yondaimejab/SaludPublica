@@ -12,6 +12,14 @@ namespace SaludPublica.Models
         [ForeignKey("PacienteID")]
         public int PacienteID { get; set; }
         public Paciente Paciente { get; set; }
-        public ICollection<Enfermedad> Enfermedades { get; set; }
+        [ForeignKey("EnfermedadID")]
+        public string EnfermedadID { get; set; }
+        public Enfermedad Enfermedad { get; set; }
+        [ForeignKey("DoctorID")]
+        public string DoctorID { get; set; }
+        public ApplicationUser Doctor { get; set; }
+
+
+
     }
 }
