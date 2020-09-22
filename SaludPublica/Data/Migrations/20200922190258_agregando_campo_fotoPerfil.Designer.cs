@@ -11,8 +11,8 @@ using System;
 namespace SaludPublica.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180707223040_Changes")]
-    partial class Changes
+    [Migration("20200922190258_agregando_campo_fotoPerfil")]
+    partial class agregando_campo_fotoPerfil
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -185,9 +185,22 @@ namespace SaludPublica.Data.Migrations
                     b.Property<int>("DiagnosticoID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Comment")
+                        .HasMaxLength(300);
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<string>("DoctorID");
+
+                    b.Property<int>("EnfermedadID");
+
                     b.Property<int>("PacienteID");
 
                     b.HasKey("DiagnosticoID");
+
+                    b.HasIndex("DoctorID");
+
+                    b.HasIndex("EnfermedadID");
 
                     b.HasIndex("PacienteID");
 
@@ -199,13 +212,9 @@ namespace SaludPublica.Data.Migrations
                     b.Property<int>("EnfermedadID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("DiagnosticoID");
-
                     b.Property<string>("Nombre");
 
                     b.HasKey("EnfermedadID");
-
-                    b.HasIndex("DiagnosticoID");
 
                     b.ToTable("Enfermedades");
                 });
@@ -219,7 +228,11 @@ namespace SaludPublica.Data.Migrations
 
                     b.Property<string>("Calle");
 
-                    b.Property<int>("Edad");
+                    b.Property<string>("Email");
+
+                    b.Property<DateTime>("FechaNacimiento");
+
+                    b.Property<byte[]>("ImageData");
 
                     b.Property<string>("Nombre");
 
@@ -230,9 +243,10 @@ namespace SaludPublica.Data.Migrations
                     b.Property<string>("Sector");
 
                     b.Property<string>("Sexo")
-                        .HasMaxLength(1);
+                        .IsRequired();
 
-                    b.Property<string>("Telefono");
+                    b.Property<string>("Telefono")
+                        .IsRequired();
 
                     b.HasKey("PacienteID");
 
@@ -298,7 +312,7 @@ namespace SaludPublica.Data.Migrations
 
                     b.HasIndex("SintomaID");
 
-                    b.ToTable("sintomaPorEnfermedades");
+                    b.ToTable("SintomaPorEnfermedades");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -348,17 +362,19 @@ namespace SaludPublica.Data.Migrations
 
             modelBuilder.Entity("SaludPublica.Models.Diagnostico", b =>
                 {
+                    b.HasOne("SaludPublica.Models.ApplicationUser", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorID");
+
+                    b.HasOne("SaludPublica.Models.Enfermedad", "Enfermedad")
+                        .WithMany()
+                        .HasForeignKey("EnfermedadID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("SaludPublica.Models.Paciente", "Paciente")
                         .WithMany("Diagnosticos")
                         .HasForeignKey("PacienteID")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("SaludPublica.Models.Enfermedad", b =>
-                {
-                    b.HasOne("SaludPublica.Models.Diagnostico")
-                        .WithMany("Enfermedades")
-                        .HasForeignKey("DiagnosticoID");
                 });
 
             modelBuilder.Entity("SaludPublica.Models.Paciente", b =>

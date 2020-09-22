@@ -61,16 +61,19 @@ namespace SaludPublica.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PacienteID,Nombre,Apellido,Telefono,Calle,NumeroDeCasa,Sector,ProvinciaID,Edad,Sexo")] Paciente paciente)
+        public async Task<IActionResult> Create([FromForm] PacienteProvinciaViewModel pacienteModel)
         {
+            var paciente = pacienteModel.Paciente;
+            
             if (ModelState.IsValid)
             {
+                paciente.ImageData = new Services.FileFormToByteArray().Convert(pacienteModel.FotoPerfil);
                 _context.Add(paciente);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProvinciaID"] = new SelectList(_context.Provincias, "ProvinciaID", "Nombre", paciente.ProvinciaID);
-            return View(paciente);
+            pacienteModel.Provincias = _context.Provincias.ToList();
+            return View(pacienteModel);
         }
 
         // GET: Pacientes/Edit/5
@@ -81,13 +84,18 @@ namespace SaludPublica.Controllers
                 return NotFound();
             }
 
-            var paciente = await _context.Pacientes.SingleOrDefaultAsync(m => m.PacienteID == id);
-            if (paciente == null)
+            var viewModel = new PacienteEditModel()
+            {
+                Paciente = await _context.Pacientes.SingleOrDefaultAsync(m => m.PacienteID == id),
+                Provincias = _context.Provincias.ToList()
+            };
+
+            if (viewModel.Paciente == null)
             {
                 return NotFound();
             }
-            ViewData["ProvinciaID"] = new SelectList(_context.Provincias, "ProvinciaID", "Nombre", paciente.ProvinciaID);
-            return View(paciente);
+            ViewData["ProvinciaID"] = new SelectList(_context.Provincias, "ProvinciaID", "Nombre", viewModel.Paciente.ProvinciaID);
+            return View(viewModel);
         }
 
         // POST: Pacientes/Edit/5
@@ -95,8 +103,10 @@ namespace SaludPublica.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PacienteID,Nombre,Apellido,Telefono,Calle,NumeroDeCasa,Sector,ProvinciaID,Edad,Sexo")] Paciente paciente)
+        public async Task<IActionResult> Edit(int id, [FromForm] PacienteEditModel model)
         {
+            var paciente = model.Paciente;
+
             if (id != paciente.PacienteID)
             {
                 return NotFound();
@@ -106,6 +116,13 @@ namespace SaludPublica.Controllers
             {
                 try
                 {
+                    if (model.FotoPerfil == null)
+                        model.Paciente.ImageData = _context.Pacientes
+                            .Where(r => r.PacienteID == model.Paciente.PacienteID)
+                            .Select(r => r.ImageData)
+                            .FirstOrDefault();
+                    else
+                        paciente.ImageData = new Services.FileFormToByteArray().Convert(model.FotoPerfil);
                     _context.Update(paciente);
                     await _context.SaveChangesAsync();
                 }
@@ -123,7 +140,7 @@ namespace SaludPublica.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ProvinciaID"] = new SelectList(_context.Provincias, "ProvinciaID", "Nombre", paciente.ProvinciaID);
-            return View(paciente);
+            return View(model);
         }
 
         // GET: Pacientes/Delete/5

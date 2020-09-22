@@ -227,7 +227,15 @@ namespace SaludPublica.Data.Migrations
 
                     b.Property<string>("Calle");
 
-                    b.Property<int>("Edad");
+                    b.Property<string>("Descripcion");
+
+                    b.Property<string>("Email");
+
+                    b.Property<bool>("EsCliente");
+
+                    b.Property<DateTime>("FechaNacimiento");
+
+                    b.Property<byte[]>("ImageData");
 
                     b.Property<string>("Nombre");
 
@@ -238,9 +246,10 @@ namespace SaludPublica.Data.Migrations
                     b.Property<string>("Sector");
 
                     b.Property<string>("Sexo")
-                        .HasMaxLength(1);
+                        .IsRequired();
 
-                    b.Property<string>("Telefono");
+                    b.Property<string>("Telefono")
+                        .IsRequired();
 
                     b.HasKey("PacienteID");
 
@@ -306,7 +315,7 @@ namespace SaludPublica.Data.Migrations
 
                     b.HasIndex("SintomaID");
 
-                    b.ToTable("sintomaPorEnfermedades");
+                    b.ToTable("SintomaPorEnfermedades");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -30,9 +30,9 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li><a asp-area="" asp-controller="Pacientes" asp-action="Index">Pacientes</a></li>
+                    <li><a asp-area="" asp-controller="Provincias" asp-action="Index">Provincias</a></li>
+                    <li><a asp-area="" asp-controller="Pais" asp-action="Index">Paises</a></li>
                     @{
                         if (User.IsInRole("Administrador"))
                         {
@@ -49,11 +49,11 @@
                         }
                     }
                 </ul>
-                @await Html.PartialAsync("_LoginPartial")
+                @*await Html.PartialAsync("_LoginPartial")*@
             </div>
         </div>
     </nav>
-    <div class="container body-content">
+    <div class="container body-content" style="position:relative;">
         @RenderBody()
         <hr />
         <footer>

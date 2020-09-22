@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<SaludPublica.Models.Provincia>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Provincias";
 }
 
-<h2>Index</h2>
+<h2>Provincias</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-success" asp-action="Create">Crear Provincia</a>
 </p>
 <table class="table">
     <thead>
@@ -18,7 +18,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Pais)
             </th>
-            <th></th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -31,9 +31,9 @@
                 @Html.DisplayFor(modelItem => item.Pais.Nombre)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ProvinciaID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ProvinciaID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ProvinciaID">Delete</a>
+                <a class="btn btn-sm btn-primary"asp-action="Details" asp-route-id="@item.ProvinciaID">Detalles</a> |
+                <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.ProvinciaID">Editar</a> |
+                <a class="btn btn-sm btn-danger"asp-action="Delete" asp-route-id="@item.ProvinciaID">Eliminar</a>
             </td>
         </tr>
 }

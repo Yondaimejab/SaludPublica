@@ -13,6 +13,7 @@ namespace SaludPublica.Models
         [Required]
         public string Nombre { get; set; }
         [ForeignKey("PaisID")]
+        [Display(Name = "Pais")]
         public int PaisID { get; set; }
         public virtual Pais Pais { get; set; }
     }

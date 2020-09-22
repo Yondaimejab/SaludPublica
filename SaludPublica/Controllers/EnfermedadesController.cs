@@ -41,7 +41,7 @@ namespace SaludPublica.Controllers
             {
                 return NotFound();
             }
-            var query = from registro in await _context.sintomaPorEnfermedades.ToListAsync()
+            var query = from registro in await _context.SintomaPorEnfermedades.ToListAsync()
                         join sintoma in await _context.Sintomas.ToListAsync() on registro.SintomaID equals sintoma.SintomaID
                         where registro.EnfermedadID == enfermedad.EnfermedadID
                         select sintoma;
@@ -108,7 +108,7 @@ namespace SaludPublica.Controllers
             {
                 return NotFound();
             }
-            var query = from registro in await _context.sintomaPorEnfermedades.ToListAsync()
+            var query = from registro in await _context.SintomaPorEnfermedades.ToListAsync()
                         join sintoma in await _context.Sintomas.ToListAsync() on registro.SintomaID equals sintoma.SintomaID
                         where registro.EnfermedadID == enfermedad.EnfermedadID
                         select sintoma;
@@ -137,13 +137,13 @@ namespace SaludPublica.Controllers
                 try
                 {
                     _context.Update(enfermedad);
-                    var query = from registro in await _context.sintomaPorEnfermedades.ToListAsync()
+                    var query = from registro in await _context.SintomaPorEnfermedades.ToListAsync()
                                 join sintoma in await _context.Sintomas.ToListAsync() on registro.SintomaID equals sintoma.SintomaID
                                 where registro.EnfermedadID == enfermedad.EnfermedadID
                                 select registro;
                     foreach (var item in query)
                     {
-                        _context.sintomaPorEnfermedades.Remove(item);
+                        _context.SintomaPorEnfermedades.Remove(item);
                     }
                     var lista = new List<SintomaPorEnfermedades>();
                     foreach (var item in sintomas)
@@ -186,7 +186,7 @@ namespace SaludPublica.Controllers
             {
                 return NotFound();
             }
-            var query = from registro in await _context.sintomaPorEnfermedades.ToListAsync()
+            var query = from registro in await _context.SintomaPorEnfermedades.ToListAsync()
                         join sintoma in await _context.Sintomas.ToListAsync() on registro.SintomaID equals sintoma.SintomaID
                         where registro.EnfermedadID == enfermedad.EnfermedadID
                         select sintoma;
@@ -209,13 +209,13 @@ namespace SaludPublica.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var enfermedad = await _context.Enfermedades.SingleOrDefaultAsync(m => m.EnfermedadID == id);
-            var query = from registro in await _context.sintomaPorEnfermedades.ToListAsync()
+            var query = from registro in await _context.SintomaPorEnfermedades.ToListAsync()
                         join sintoma in await _context.Sintomas.ToListAsync() on registro.SintomaID equals sintoma.SintomaID
                         where registro.EnfermedadID == enfermedad.EnfermedadID
                         select registro;
             foreach (var item in query)
             {
-                _context.sintomaPorEnfermedades.Remove(item);
+                _context.SintomaPorEnfermedades.Remove(item);
             }
             _context.Enfermedades.Remove(enfermedad);
             await _context.SaveChangesAsync();

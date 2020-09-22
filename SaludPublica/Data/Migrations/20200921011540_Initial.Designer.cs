@@ -11,8 +11,8 @@ using System;
 namespace SaludPublica.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180719005052_Diagnostico")]
-    partial class Diagnostico
+    [Migration("20200921011540_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -185,11 +185,14 @@ namespace SaludPublica.Data.Migrations
                     b.Property<int>("DiagnosticoID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Comment")
+                        .HasMaxLength(300);
+
+                    b.Property<DateTime>("Date");
+
                     b.Property<string>("DoctorID");
 
-                    b.Property<string>("EnfermedadID");
-
-                    b.Property<int?>("EnfermedadID1");
+                    b.Property<int>("EnfermedadID");
 
                     b.Property<int>("PacienteID");
 
@@ -197,7 +200,7 @@ namespace SaludPublica.Data.Migrations
 
                     b.HasIndex("DoctorID");
 
-                    b.HasIndex("EnfermedadID1");
+                    b.HasIndex("EnfermedadID");
 
                     b.HasIndex("PacienteID");
 
@@ -225,7 +228,7 @@ namespace SaludPublica.Data.Migrations
 
                     b.Property<string>("Calle");
 
-                    b.Property<int>("Edad");
+                    b.Property<DateTime>("FechaNacimiento");
 
                     b.Property<string>("Nombre");
 
@@ -360,7 +363,8 @@ namespace SaludPublica.Data.Migrations
 
                     b.HasOne("SaludPublica.Models.Enfermedad", "Enfermedad")
                         .WithMany()
-                        .HasForeignKey("EnfermedadID1");
+                        .HasForeignKey("EnfermedadID")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("SaludPublica.Models.Paciente", "Paciente")
                         .WithMany("Diagnosticos")

@@ -11,8 +11,8 @@ using System;
 namespace SaludPublica.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180626163640_FirstMigration")]
-    partial class FirstMigration
+    [Migration("20200921013147_Nuevos_Campos")]
+    partial class Nuevos_Campos
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -180,6 +180,139 @@ namespace SaludPublica.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("SaludPublica.Models.Diagnostico", b =>
+                {
+                    b.Property<int>("DiagnosticoID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(300);
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<string>("DoctorID");
+
+                    b.Property<int>("EnfermedadID");
+
+                    b.Property<int>("PacienteID");
+
+                    b.HasKey("DiagnosticoID");
+
+                    b.HasIndex("DoctorID");
+
+                    b.HasIndex("EnfermedadID");
+
+                    b.HasIndex("PacienteID");
+
+                    b.ToTable("Diagnosticos");
+                });
+
+            modelBuilder.Entity("SaludPublica.Models.Enfermedad", b =>
+                {
+                    b.Property<int>("EnfermedadID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Nombre");
+
+                    b.HasKey("EnfermedadID");
+
+                    b.ToTable("Enfermedades");
+                });
+
+            modelBuilder.Entity("SaludPublica.Models.Paciente", b =>
+                {
+                    b.Property<int>("PacienteID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Apellido");
+
+                    b.Property<string>("Calle");
+
+                    b.Property<string>("Email");
+
+                    b.Property<DateTime>("FechaNacimiento");
+
+                    b.Property<string>("Nombre");
+
+                    b.Property<int>("NumeroDeCasa");
+
+                    b.Property<int>("ProvinciaID");
+
+                    b.Property<string>("Sector");
+
+                    b.Property<string>("Sexo")
+                        .HasMaxLength(1);
+
+                    b.Property<string>("Telefono")
+                        .IsRequired();
+
+                    b.HasKey("PacienteID");
+
+                    b.HasIndex("ProvinciaID");
+
+                    b.ToTable("Pacientes");
+                });
+
+            modelBuilder.Entity("SaludPublica.Models.Pais", b =>
+                {
+                    b.Property<int>("PaisID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Nombre")
+                        .IsRequired();
+
+                    b.HasKey("PaisID");
+
+                    b.ToTable("Paises");
+                });
+
+            modelBuilder.Entity("SaludPublica.Models.Provincia", b =>
+                {
+                    b.Property<int>("ProvinciaID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Nombre")
+                        .IsRequired();
+
+                    b.Property<int>("PaisID");
+
+                    b.HasKey("ProvinciaID");
+
+                    b.HasIndex("PaisID");
+
+                    b.ToTable("Provincias");
+                });
+
+            modelBuilder.Entity("SaludPublica.Models.Sintoma", b =>
+                {
+                    b.Property<int>("SintomaID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Descripcion");
+
+                    b.HasKey("SintomaID");
+
+                    b.ToTable("Sintomas");
+                });
+
+            modelBuilder.Entity("SaludPublica.Models.SintomaPorEnfermedades", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("EnfermedadID");
+
+                    b.Property<int>("SintomaID");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("EnfermedadID");
+
+                    b.HasIndex("SintomaID");
+
+                    b.ToTable("sintomaPorEnfermedades");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole")
@@ -222,6 +355,52 @@ namespace SaludPublica.Data.Migrations
                     b.HasOne("SaludPublica.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("SaludPublica.Models.Diagnostico", b =>
+                {
+                    b.HasOne("SaludPublica.Models.ApplicationUser", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorID");
+
+                    b.HasOne("SaludPublica.Models.Enfermedad", "Enfermedad")
+                        .WithMany()
+                        .HasForeignKey("EnfermedadID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("SaludPublica.Models.Paciente", "Paciente")
+                        .WithMany("Diagnosticos")
+                        .HasForeignKey("PacienteID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("SaludPublica.Models.Paciente", b =>
+                {
+                    b.HasOne("SaludPublica.Models.Provincia", "Provincia")
+                        .WithMany()
+                        .HasForeignKey("ProvinciaID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("SaludPublica.Models.Provincia", b =>
+                {
+                    b.HasOne("SaludPublica.Models.Pais", "Pais")
+                        .WithMany()
+                        .HasForeignKey("PaisID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("SaludPublica.Models.SintomaPorEnfermedades", b =>
+                {
+                    b.HasOne("SaludPublica.Models.Enfermedad", "Enfermedad")
+                        .WithMany()
+                        .HasForeignKey("EnfermedadID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("SaludPublica.Models.Sintoma", "Sintoma")
+                        .WithMany()
+                        .HasForeignKey("SintomaID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

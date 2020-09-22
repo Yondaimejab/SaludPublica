@@ -1,74 +1,140 @@
-﻿@model SaludPublica.Models.Paciente
+﻿@model SaludPublica.ViewModels.PacienteEditModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Paciente";
 }
 
-<h2>Edit</h2>
+<h2>Editar</h2>
 
 <h4>Paciente</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="PacienteID" />
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
+<form asp-action="Edit" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row">
+        <div class="col-md-4 col-md-push-8">
+            <label asp-for="FotoPerfil">
+                @if (Model.Paciente.ImageData != null)
+                {
+                    <img id="perfil-photo"
+                         src="data:image/png;base64,@Convert.ToBase64String(Model.Paciente.ImageData)"
+                         class="img-responsive img-rounded" />
+                }
+                else
+                {
+                    <img id="perfil-photo" src="~/images/Perfil.jpg" class="w-100" />
+                }
+            </label>
+            <br />
+            <br />
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label asp-for="FotoPerfil" class="control-label"></label>
+                    <input type="file" asp-for="FotoPerfil" accept="image/x-png,image/gif,image/jpeg" />
+                    <span asp-validation-for="FotoPerfil" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Apellido" class="control-label"></label>
-                <input asp-for="Apellido" class="form-control" />
-                <span asp-validation-for="Apellido" class="text-danger"></span>
+        </div>
+        <div class="col-md-8 col-md-pull-4">
+            <div class="row">
+                <input type="hidden" asp-for="Paciente.PacienteID" />
+                <div class="form-group col-md-6">
+                    <label asp-for="Paciente.Nombre" class="control-label"></label>
+                    <input asp-for="Paciente.Nombre" class="form-control" />
+                    <span asp-validation-for="Paciente.Nombre" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Paciente.Apellido" class="control-label"></label>
+                    <input asp-for="Paciente.Apellido" class="form-control" />
+                    <span asp-validation-for="Paciente.Apellido" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Telefono" class="control-label"></label>
-                <input asp-for="Telefono" class="form-control" />
-                <span asp-validation-for="Telefono" class="text-danger"></span>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="Paciente.Telefono" class="control-label"></label>
+                    <input asp-for="Paciente.Telefono" class="form-control" />
+                    <span asp-validation-for="Paciente.Telefono" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Paciente.Calle" class="control-label"></label>
+                    <input asp-for="Paciente.Calle" class="form-control" />
+                    <span asp-validation-for="Paciente.Calle" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Calle" class="control-label"></label>
-                <input asp-for="Calle" class="form-control" />
-                <span asp-validation-for="Calle" class="text-danger"></span>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="Paciente.NumeroDeCasa" class="control-label"></label>
+                    <input asp-for="Paciente.NumeroDeCasa" class="form-control" />
+                    <span asp-validation-for="Paciente.NumeroDeCasa" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Paciente.Sector" class="control-label"></label>
+                    <input asp-for="Paciente.Sector" class="form-control" />
+                    <span asp-validation-for="Paciente.Sector" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="NumeroDeCasa" class="control-label"></label>
-                <input asp-for="NumeroDeCasa" class="form-control" />
-                <span asp-validation-for="NumeroDeCasa" class="text-danger"></span>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="Paciente.ProvinciaID" class="control-label"></label>
+                    <select asp-for="Paciente.ProvinciaID" class="form-control" asp-items="ViewBag.ProvinciaID"></select>
+                    <span asp-validation-for="Paciente.ProvinciaID" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Paciente.FechaNacimiento" class="control-label"></label>
+                    <input asp-for="Paciente.FechaNacimiento" class="form-control" />
+                    <span asp-validation-for="Paciente.FechaNacimiento" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Sector" class="control-label"></label>
-                <input asp-for="Sector" class="form-control" />
-                <span asp-validation-for="Sector" class="text-danger"></span>
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label asp-for="Paciente.Sexo" class="control-label"></label>
+                    <br />
+                    <input type="radio" asp-for="Paciente.Sexo" value="M" />Masculino<br />
+                    <input type="radio" asp-for="Paciente.Sexo" value="F" />Femenino<br />
+                    <span asp-validation-for="Paciente.Sexo" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-2">
+                    <label asp-for="Paciente.EsCliente" class="control-label"></label>
+                    <br />
+                    <input asp-for="Paciente.EsCliente" /><br />
+                    <span asp-validation-for="Paciente.EsCliente" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-8">
+                    <label asp-for="Paciente.Descripcion" class="control-label"></label>
+                    <textarea type="radio" asp-for="Paciente.Descripcion" class="form-control"></textarea>
+                    <span asp-validation-for="Paciente.Descripcion" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="ProvinciaID" class="control-label"></label>
-                <select asp-for="ProvinciaID" class="form-control" asp-items="ViewBag.ProvinciaID"></select>
-                <span asp-validation-for="ProvinciaID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Edad" class="control-label"></label>
-                <input asp-for="Edad" class="form-control" />
-                <span asp-validation-for="Edad" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Sexo" class="control-label"></label>
-                <input asp-for="Sexo" class="form-control" />
-                <span asp-validation-for="Sexo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+
+    <div class="form-group">
+        <input type="submit" value="Guardar" class="btn btn-primary" />
+    </div>
+</form>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Volver Atras</a>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+        var input = document.querySelector('#@Html.IdFor(r=>r.FotoPerfil)');
+
+        // You will receive the Base64 value every time a user selects a file from his device
+        // As an example I selected a one-pixel red dot GIF file from my computer
+        input.onchange = function () {
+            var file = input.files[0],
+                reader = new FileReader();
+
+            reader.onloadend = function () {
+                // Since it contains the Data URI, we should remove the prefix and keep only Base64 string
+                var b64 = reader.result.replace(/^data:.+;base64,/, '');
+                document.querySelector('#perfil-photo').src = "data:image/png;base64,"+b64;
+            };
+
+            reader.readAsDataURL(file);
+        };
+</script>
 }
